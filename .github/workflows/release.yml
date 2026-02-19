@@ -45,8 +45,6 @@ jobs:
       - name: Build Docker image
         run: |
           export BUILD_VERSION=${{ github.ref_name }}
-          export BUILD_VERSION=v1.0.0
-
           export IMAGE=ghcr.io/${{ github.repository }}
 
           cp playerlistbot.linux-amd64 build/playerlistbot.linux-amd64
