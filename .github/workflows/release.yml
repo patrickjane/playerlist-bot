@@ -28,7 +28,7 @@ jobs:
       - name: Build Docker image
         run: |
           export BUILD_VERSION=${{ github.ref_name }}
-          cp playerlistbot.linux-amd64 build/
+          cp playerlistbot.linux-amd64 build/playerlistbot
           cd build
           docker build -t playerlist-bot:${BUILD_VERSION} .
 
