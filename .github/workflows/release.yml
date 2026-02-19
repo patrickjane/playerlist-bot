@@ -30,7 +30,7 @@ jobs:
           export BUILD_VERSION=${{ github.ref_name }}
           cp playerlistbot.linux-amd64 build/playerlistbot
           cd build
-          docker build -t ghcr.io/${{ github.repository }}/playerlist-bot:${BUILD_VERSION} .
+          docker build -t ghcr.io/${{ github.repository }}:${BUILD_VERSION} .
 
       - name: Log in to GitHub Packages
         uses: docker/login-action@v3
@@ -42,7 +42,7 @@ jobs:
       - name: Push Docker image
         run: |
           export BUILD_VERSION=${{ github.ref_name }}
-          docker push ghcr.io/${{ github.repository }}/playerlist-bot:${BUILD_VERSION}
+          docker push ghcr.io/${{ github.repository }}:${BUILD_VERSION}
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
