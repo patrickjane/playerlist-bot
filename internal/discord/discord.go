@@ -180,6 +180,7 @@ func (bot *DiscordBot) updatePlayerList(existingMessageId string, serverStatusMa
 
 		if !serverInfo.Reachable {
 			color = 0xc1121f
+			playerlist = "Server unreachable"
 		}
 
 		payload.Embeds = append(payload.Embeds, &discordgo.MessageEmbed{
