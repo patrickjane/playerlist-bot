@@ -23,7 +23,7 @@ The bot is configured using environment variables. The following variables exist
 |DISCORD_CACHE_PATH            | No       | ./discordplayerlistbot.txt | Cache file to store the message ID of the status message the bot is going to edit upon every player list update. Used to prevent complicated lookup of the message after a bot restart. |
 |DISCORD_SHOW_JOINLEAVE        | No       |  true     | Send join/leave notifications to discord every time the bot detecs a player joining or leaving a server |
 |DISCORD_PIN_PLAYERLIST        | No       |  true     | The discord bot token |
-|RCON_QUERY_EVERY_S            | No       |  30     | The interval at which the bot queries the playerlist at the game server via RCON |
+|RCON_QUERY_EVERY_S            | No       |  30     | The interval (in seconds) at which the bot queries the playerlist at the game server via RCON |
 |RCON_SERVERS                  | YES       |          | IP,name,password tuples (separated by ;) for the game servers to connect to |
 
 #### Note
@@ -73,9 +73,11 @@ services:
     environment:
       - DISCORD_CHANNEL_ID_STATUS=xxxx
       - DISCORD_BOT_TOKEN=xxxxx
+      - DISCORD_CACHE_PATH=/data/cache.txt
       - RCON_QUERY_EVERY_S=30
       - RCON_SERVERS=xx.xx.xx.xx:27020,Lost Colony,MyPassword;xx.xx.xx.xx:27022,Extinction,MyPassword
-
+    volumes:
+      - ./:/data
 ```
 
 And then:
