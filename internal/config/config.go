@@ -1,7 +1,9 @@
 package config
 
 import (
+	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"log/slog"
 	"os"
@@ -12,36 +14,78 @@ import (
 var Version string
 
 type ConfigRconServer struct {
-	Address  string
-	Name     string
-	Password string
+	Address  string `json:"address"`
+	Name     string `json:"name"`
+	Password string `json:"password"`
 }
 
 type ConfigRcon struct {
-	Servers           []ConfigRconServer
-	QueryEverySeconds int
+	Servers           []ConfigRconServer `json:"servers"`
+	QueryEverySeconds int                `json:"queryEverySeconds"`
 }
 
 type ConfigDiscord struct {
-	ChannelIDStatus    string
-	ChannelIDJoinLeave string
-	BotToken           string
-	Tag                string
-	CachePath          string
-	ShowJoinLeave      bool
-	PinPlayerList      bool
+	ChannelIDStatus    string `json:"channelIDStatus"`
+	ChannelIDJoinLeave string `json:"channelIDJoinLeave"`
+	BotToken           string `json:"botToken"`
+	Tag                string `json:"tag"`
+	CachePath          string `json:"cachePath"`
+	ShowJoinLeave      bool   `json:"showJoinLeave"`
+	PinPlayerList      bool   `json:"pinPlayerList"`
 }
 
 type Config struct {
-	Rcon    ConfigRcon
-	Discord ConfigDiscord
+	Rcon    ConfigRcon    `json:"rcon"`
+	Discord ConfigDiscord `json:"discord"`
 
-	LogFile string
+	LogFile string `json:"logFile"`
 }
 
 func ParseConfig() Config {
+	res := _parseConfig()
+
+	if res.Rcon.Servers == nil || len(res.Rcon.Servers) == 0 {
+		slog.Info(fmt.Sprintf("No RCON servers configured"))
+		os.Exit(1)
+	}
+
+	if res.Discord.BotToken == "" {
+		slog.Info(fmt.Sprintf("No discord bot token configured"))
+		os.Exit(1)
+	}
+
+	if res.Discord.ChannelIDStatus == "" {
+		slog.Info(fmt.Sprintf("No discord channel ID configured"))
+		os.Exit(1)
+	}
+
+	return res
+}
+
+func _parseConfig() Config {
 	var res Config
 	res.Rcon.Servers = make([]ConfigRconServer, 0)
+	res.LogFile = "-"
+
+	var configFile string
+	flag.StringVar(&configFile, "config-file", "", "Path to the JSON configuration file")
+	flag.Parse()
+
+	if configFile != "" {
+		dat, err := os.ReadFile(configFile)
+
+		if err != nil {
+			slog.Info(fmt.Sprintf("Failed to read config file %s: %s", configFile, err))
+			os.Exit(1)
+		}
+
+		if err = json.Unmarshal(dat, &res); err != nil {
+			slog.Info(fmt.Sprintf("Failed to parse config file %s: %s", configFile, err))
+			os.Exit(1)
+		}
+
+		return res
+	}
 
 	readString("LOG_FILE", &res.LogFile, "-")
 

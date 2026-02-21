@@ -10,9 +10,11 @@ This library uses the awesome github.com/gorcon/rcon library to interact with RC
 
 I have tested it with **Ark: Survival Ascended**, but it should work with other game servers as well.
 
-# Settings
+# Configuration
 
-The bot is configured using environment variables. The following variables exist:
+## Envirnonment variables
+
+The bot can be configured using environment variables. The following variables exist:
 
 | Variable                     | Required | Default  | Note |
 |------------------------------|----------|----------|----------|
@@ -26,6 +28,57 @@ The bot is configured using environment variables. The following variables exist
 |RCON_QUERY_EVERY_S            | No       |  30     | The interval (in seconds) at which the bot queries the playerlist at the game server via RCON |
 |RCON_SERVERS                  | YES       |          | IP,name,password tuples (separated by ;) for the game servers to connect to |
 |LOG_FILE                  | No      |          | File to store logmessages in. Logs to stdout if omitted (default). |
+
+
+## Config file
+
+The bot can also be configured by using a JSON configuration:
+
+```
+{
+    "rcon": {
+        "servers": [
+            {
+                "address": "xx.xx.xx.xx:27020",
+                "name": "Lost Colony",
+                "password": "XXXXX"
+            },
+            {
+                "address": "xx.xx.xx.xx:27022",
+                "name": "Extinction",
+                "password": "XXXXX"
+            },
+            {
+                "address": "xx.xx.xx.xx:27021",
+                "name": "Aberration",
+                "password": "XXXXX"
+            },
+            {
+                "address": "xx.xx.xx.xx:27023",
+                "name": "Scorched Earth",
+                "password": "XXXXX"
+            }
+        ],
+        "queryEverySeconds": 60
+    },
+    "discord": {
+        "channelIDStatus": "1111111",
+        "channelIDJoinLeave": "11111111",
+        "botToken": "XXXXXXX",
+        "tag": "playerlistbot",
+        "cachePath": "./discordplayerlistbot.txt",
+        "showJoinLeave": true,
+        "pinPlayerList": true
+    },
+    "logFile": "./app.log"
+}
+```
+
+Then run the bot like this:
+
+```
+$ ./playerlistbot --config-file config.json
+```
 
 #### Note
 
@@ -75,7 +128,7 @@ services:
       - DISCORD_CHANNEL_ID_STATUS=xxxx
       - DISCORD_BOT_TOKEN=xxxxx
       - DISCORD_CACHE_PATH=/data/cache.txt
-      - RCON_QUERY_EVERY_S=30
+      - RCON_QUERY_EVERY_S=60
       - RCON_SERVERS=xx.xx.xx.xx:27020,Lost Colony,MyPassword;xx.xx.xx.xx:27022,Extinction,MyPassword
     volumes:
       - ./:/data
