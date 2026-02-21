@@ -48,6 +48,6 @@ echo "-> windows/amd64"
 CGO_ENABLED=0 GOOS=windows GOARCH=amd64 \
 go build -ldflags "${LDFLAGS}" \
 -o ${APP_NAME}.windows-amd64.exe \
-cmd/playerlistbot/main.go
+cmd/playerlistbot/main-windows.go
 
 echo "Done ✅"

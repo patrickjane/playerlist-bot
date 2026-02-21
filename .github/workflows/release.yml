@@ -59,6 +59,13 @@ jobs:
               --push \
               .
 
+      - name: Create windows service bundle
+        run: |
+          cp playerlistbot.windows-amd64.exe windows/
+          cd windows/
+          zip playerlistbot-windows-service.zip playerlistbot.windows-amd64.exe example_config.json  install-playerlistbot-service.ps1 uninstall-playerlistbot-service.ps1
+          mv playerlistbot-windows-service.zip ../
+
       - name: Create Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
@@ -70,3 +77,4 @@ jobs:
             playerlistbot.linux-amd64
             playerlistbot.linux-arm64
             playerlistbot.windows-amd64.exe
+            playerlistbot-windows-service.zip
