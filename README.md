@@ -29,6 +29,14 @@ The bot can be configured using environment variables. The following variables e
 |RCON_SERVERS                  | YES       |          | IP,name,password tuples (separated by ;) for the game servers to connect to |
 |LOG_FILE                  | No      |          | File to store logmessages in. Logs to stdout if omitted (default). |
 
+#### Note
+
+`RCON_SERVERS` must be given in the following syntax:
+
+```
+RCON_SERVERS="10.0.0.1:27015,Server One,secret123;10.0.0.2:27015,Server two,backup456"
+```
+
 
 ## Config file
 
@@ -78,14 +86,6 @@ Then run the bot like this:
 
 ```
 $ ./playerlistbot --config-file config.json
-```
-
-#### Note
-
-`RCON_SERVERS` must be given in the following syntax:
-
-```
-RCON_SERVERS="10.0.0.1:27015,Server One,secret123;10.0.0.2:27015,Server two,backup456"
 ```
 
 # Installation
@@ -239,5 +239,81 @@ Service uninstalled successfully.
 You may now delete the application folder manually.
 ```
 
-## License
+# Discord bot
+
+This chapter gives a rough overview of how to get a discord bot up and running, in case you have never done it before. This requires a discord developer account, which you can create at https://discord.com/developers .
+
+## Step 1
+
+Go to https://discord.com/developers/applications and create a new application:
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord1.png">
+
+## Step 2
+
+On the left side, go to **Bot**. Enable:
+
+- Presence Intent
+- Message Content Intent
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord2.png">
+
+Save changes.
+
+## Step 3
+
+Scroll up a bit, press the "**Reset Token**" button, confirm with your password, and afterwards copy your token and store it in a secure place. **You can not retrieve it later**, the only way to obtain it again is by resetting again and creating a new token. This token is needed in the bot config.
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord3.png">
+
+You might also want to edit the **Username** of the bot, otherwise it will appear as something like **bot1474723406946504908**. You can give it any name you like, e.g. **Playerlist Bot**.
+
+## Step 4
+
+On the left side, go to *OAuth*.Under **OAuth2 URL Generator**, enable "**Bot**", and in the table that appears, check the following permissions:
+
+- Send messages
+- Manage Messages
+- Read message history
+- Pin messages
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord4.png">
+
+On the very bottom, there will be a line "**Generated URL**", where you can press the button to copy the URL. Do that.
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord5.png">
+
+## Step 5
+
+Paste the URL of step 4 in your browser, where you are logged in to discord. This will open a prompt to invite the bot to your discord server. If you have the discord app installed, it will open the discord app with the same prompt. Confirm to invite the bot to your server.
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord6.png">
+
+(Sorry, I only have this in german, but you gonna get it)
+
+## Step 6
+
+In discord, go to **User Settings**, select **Advanced**, and toggle on **Developer Mode**.
+
+<img title="Screenshot" alt="Screenshot" width="50%" border="1" src="screenshots/discord7.png">
+
+(again, I only have this in german, but you gonna get it)
+
+This will allow you to copy channel-IDs, which is needed to tell the bot where to send messages to.
+
+## Step 7
+
+In discord, right-click the channel you want the bot to post messages in, and click "Copy channel ID" on the very bottom.
+
+<img title="Screenshot" alt="Screenshot" width="25%" border="1" src="screenshots/discord8.png">
+
+This will be the channel ID you need for the bot config.
+
+(again, I only have this in german, but you gonna get it)
+
+## Summary
+
+After all the setup, you can use the channel ID (or multiple channel IDs, in case you want the playerlist and the join/leave notifications in different channels) of **Step 7**, and the bot token of **Step 3** to configure your bot.
+
+# License
 MIT License, see [LICENSE](LICENSE)
