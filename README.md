@@ -92,7 +92,7 @@ RCON_SERVERS="10.0.0.1:27015,Server One,secret123;10.0.0.2:27015,Server two,back
 
 ## Binary
 
-Download a binary from [Releases](https://github.com/patrickjane/playerlist-bot/releases) for your corresponding architecture, and run the binary. Make sure to set the environment variables as per the above definitions.
+Download a binary from the [Releases](https://github.com/patrickjane/playerlist-bot/releases) for your corresponding architecture, and run the binary. Make sure to set the environment variables as per the above definitions.
 
 Example:
 
@@ -154,6 +154,90 @@ playerlist-bot  | 2026/02/19 17:30:55 INFO Successfully started.
 
 #### Note
 Use `docker compose up -d` to run the bot in background. Afterwards use `docker ps` to find the container, and `docker logs -f [ID]` to show the logs of the container.
+
+## Windows service
+
+Download the latest archive `playerlistbot-windows-service.zip` from the [Releases](https://github.com/patrickjane/playerlist-bot/releases) and extract it to a location of your choice. For this example, we use `C:\playerlistbot`.
+
+### Step 1
+
+Open PowerShell as Administrator:
+- Click Start
+- Type: powershell
+- Right-click Windows PowerShell
+- Click Run as Administrator
+
+Then change to the bot directory:
+
+```
+PS C:\Users\Administrator> cd \
+PS C:\> cd .\playerlistbot\
+PS C:\playerlistbot>
+```
+### Step 2
+
+Allow script execution (first time only). Run:
+```
+PS C:\playerlistbot> Set-ExecutionPolicy RemoteSigned -Scope Process
+```
+In the powershell window (press enter at the end of the line).
+
+### Step 3
+
+Unblock the scripts:
+
+```
+PS C:\playerlistbot> Unblock-File .\install-playerlistbot-service.ps1
+PS C:\playerlistbot> Unblock-File .\uninstall-playerlistbot-service.ps1
+```
+(press enter at the end of the lines)
+
+### Step 4
+
+Edit the file `C:\playerlistbot\example-config.json` to your liking, set at least:
+- Bot token
+- Channel ID for status
+- RCON servers
+
+Afterwards, save the file as `config.json` (`example-config.json` is not used by the bot/service).
+
+#### Note
+In case you extracted the bot to a different directory, please adjust `logFile` and `discord.cachePath` accordingly. Make sure that you write all backslashes (`\`) as double-backslashs (`\\`).
+
+
+### Step 5
+
+Install and start the service:
+
+```
+PS C:\playerlistbot> .\install-playerlistbot-service.ps1
+Creating Windows Service...
+
+Status   Name               DisplayName
+------   ----               -----------
+Stopped  PlayerListBot      RCON-Discord Playerlist bot
+Starting service...
+
+Service installed or updated successfully.
+   Installed from: C:\playerlistbot
+You can safely re-run this script to apply config changes.
+```
+
+You can now see the service in the list of windows services. It should also start with windows automatically.
+
+### Uninstall
+
+In case you want to uninstall the service, just execute the uninstall script:
+
+```
+PS C:\playerlistbot> .\uninstall-playerlistbot-service.ps1
+Stopping service...
+Deleting service...
+
+Service uninstalled successfully.
+
+You may now delete the application folder manually.
+```
 
 ## License
 MIT License, see [LICENSE](LICENSE)

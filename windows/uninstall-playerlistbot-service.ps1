@@ -30,6 +30,6 @@ Write-Host "Deleting service..."
 sc.exe delete $ServiceName | Out-Null
 
 Write-Host ""
-Write-Host "✅ Service uninstalled successfully."
+Write-Host "Service uninstalled successfully."
 Write-Host ""
 Write-Host "You may now delete the application folder manually."

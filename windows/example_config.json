@@ -19,6 +19,8 @@
         "channelIDJoinLeave": "12345",
         "botToken": "My Bot Token",
         "showJoinLeave": true,
-        "pinPlayerList": true
-    }
+        "pinPlayerList": true,
+        "cachePath": "C:\\playerlistbot\\discordplayerlistbot.txt"
+    },
+    "logFile": "C:\\playerlistbot\\app.log"
 }

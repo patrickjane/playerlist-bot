@@ -74,6 +74,6 @@ Write-Host "Starting service..."
 Start-Service $ServiceName
 
 Write-Host ""
-Write-Host "✅ Service installed or updated successfully."
-Write-Host "Installed from: $InstallDir"
+Write-Host "Service installed or updated successfully."
+Write-Host "   Installed from: $InstallDir"
 Write-Host "You can safely re-run this script to apply config changes."
