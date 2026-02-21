@@ -59,6 +59,26 @@ func ParseConfig() Config {
 		os.Exit(1)
 	}
 
+	if res.Discord.ChannelIDJoinLeave == "" {
+		res.Discord.ChannelIDJoinLeave = res.Discord.ChannelIDStatus
+	}
+
+	if res.Discord.Tag == "" {
+		res.Discord.Tag = "playerlistbot"
+	}
+
+	if res.Discord.CachePath == "" {
+		res.Discord.CachePath = "discordplayerlistbot.txt"
+	}
+
+	if res.Rcon.QueryEverySeconds == 0 {
+		res.Rcon.QueryEverySeconds = 60
+	}
+
+	if res.LogFile == "" {
+		res.LogFile = "-"
+	}
+
 	return res
 }
 
@@ -93,11 +113,11 @@ func _parseConfig() Config {
 	readString("DISCORD_CHANNEL_ID_JOINLEAVE", &res.Discord.ChannelIDJoinLeave, res.Discord.ChannelIDStatus)
 	readString("DISCORD_BOT_TOKEN", &res.Discord.BotToken, "")
 	readString("DISCORD_MESSAGE_TAG", &res.Discord.Tag, "playerlistbot")
-	readString("DISCORD_CACHE_PATH", &res.Discord.CachePath, "./discordplayerlistbot.txt")
+	readString("DISCORD_CACHE_PATH", &res.Discord.CachePath, "discordplayerlistbot.txt")
 	readBool("DISCORD_SHOW_JOINLEAVE", &res.Discord.ShowJoinLeave, "true")
 	readBool("DISCORD_PIN_PLAYERLIST", &res.Discord.PinPlayerList, "true")
 
-	readInt("RCON_QUERY_EVERY_S", &res.Rcon.QueryEverySeconds, "30")
+	readInt("RCON_QUERY_EVERY_S", &res.Rcon.QueryEverySeconds, "60")
 
 	var rconServers string
 
