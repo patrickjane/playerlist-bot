@@ -35,11 +35,15 @@ type ConfigDiscord struct {
 type Config struct {
 	Rcon    ConfigRcon
 	Discord ConfigDiscord
+
+	LogFile string
 }
 
 func ParseConfig() Config {
 	var res Config
 	res.Rcon.Servers = make([]ConfigRconServer, 0)
+
+	readString("LOG_FILE", &res.LogFile, "-")
 
 	readString("DISCORD_CHANNEL_ID_STATUS", &res.Discord.ChannelIDStatus, "")
 	readString("DISCORD_CHANNEL_ID_JOINLEAVE", &res.Discord.ChannelIDJoinLeave, res.Discord.ChannelIDStatus)

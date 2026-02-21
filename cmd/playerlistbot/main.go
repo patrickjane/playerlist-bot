@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -16,10 +17,22 @@ import (
 var version = ""
 
 func main() {
-	slog.Info(fmt.Sprintf("PlayerlistBot %s", version))
-	slog.Info("https://github.com/patrickjane/playerlist-bot")
+	var logFile *os.File
 
 	cfg := config.ParseConfig()
+
+	if cfg.LogFile != "-" {
+		logFile, err := os.OpenFile(cfg.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+
+		if err != nil {
+			log.Fatalf("Failed to open log file: %v", err)
+		}
+
+		log.SetOutput(logFile)
+	}
+
+	slog.Info(fmt.Sprintf("PlayerlistBot %s", version))
+	slog.Info("https://github.com/patrickjane/playerlist-bot")
 
 	slog.Info("Monitoring the following servers via RCON:")
 
@@ -66,6 +79,11 @@ func main() {
 		case <-sigShutdown:
 			slog.Info("Shutting down.")
 			discordBot.Stop()
+
+			if logFile != nil {
+				logFile.Close()
+			}
+
 			return
 		case err := <-errorChan:
 			slog.Error(fmt.Sprintf("RCON error: %s", err))

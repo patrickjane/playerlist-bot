@@ -25,6 +25,7 @@ The bot is configured using environment variables. The following variables exist
 |DISCORD_PIN_PLAYERLIST        | No       |  true     | The discord bot token |
 |RCON_QUERY_EVERY_S            | No       |  30     | The interval (in seconds) at which the bot queries the playerlist at the game server via RCON |
 |RCON_SERVERS                  | YES       |          | IP,name,password tuples (separated by ;) for the game servers to connect to |
+|LOG_FILE                  | No      |          | File to store logmessages in. Logs to stdout if omitted (default). |
 
 #### Note
 
