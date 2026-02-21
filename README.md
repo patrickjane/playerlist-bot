@@ -239,6 +239,10 @@ Service uninstalled successfully.
 You may now delete the application folder manually.
 ```
 
+### Configuration changes
+
+If you want to change the configuration, make your changes in `config.json`, then use windows taskmanager (services tab) to restart again the "Playerlist Bot" service.
+
 # Discord bot
 
 This chapter gives a rough overview of how to get a discord bot up and running, in case you have never done it before. This requires a discord developer account, which you can create at https://discord.com/developers .
