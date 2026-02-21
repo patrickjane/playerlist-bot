@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"slices"
 	"sort"
 	"strings"
 
@@ -86,28 +85,49 @@ func (bot *DiscordBot) Start(updateChan <-chan map[string]*model.ServerInfo) err
 		}
 
 		if bot.cfg.ShowJoinLeave {
-			for server, serverInfo := range ifos {
-				prevPlayers := []string{}
+			prevPlayerServer := make(map[string]string)
+			currPlayerServer := make(map[string]string)
 
-				if lastInfos != nil {
-					prevPlayers = lastInfos[server].Players
-				}
-
-				for _, player := range serverInfo.Players {
-					if !slices.Contains(prevPlayers, player) {
-						if err := bot.sendNotifyMessage(server, player, true); err != nil {
-							slog.Error(fmt.Sprintf("Failed to send player join/leave message to discord: %s", err))
-						}
+			// Build previous player -> server map
+			if lastInfos != nil {
+				for server, info := range lastInfos {
+					for _, player := range info.Players {
+						prevPlayerServer[player] = server
 					}
 				}
+			}
 
-				for _, prevPlayer := range prevPlayers {
-					if !slices.Contains(serverInfo.Players, prevPlayer) {
-						err := bot.sendNotifyMessage(server, prevPlayer, false)
+			// Build current player -> server map
+			for server, info := range ifos {
+				for _, player := range info.Players {
+					currPlayerServer[player] = server
+				}
+			}
 
-						if err != nil {
-							slog.Error(fmt.Sprintf("Failed to send player join/leave message to discord: %s", err))
-						}
+			// Detect joins + moves
+			for player, newServer := range currPlayerServer {
+				oldServer, existedBefore := prevPlayerServer[player]
+
+				switch {
+				case !existedBefore:
+					// Pure join
+					if err := bot.sendNotifyMessage(newServer, player, true); err != nil {
+						slog.Error(fmt.Sprintf("Failed to send join message: %s", err))
+					}
+
+				case oldServer != newServer:
+					// Move detected
+					if err := bot.sendMoveMessage(player, oldServer, newServer); err != nil {
+						slog.Error(fmt.Sprintf("Failed to send move message: %s", err))
+					}
+				}
+			}
+
+			// Detect leaves
+			for player, oldServer := range prevPlayerServer {
+				if _, stillOnline := currPlayerServer[player]; !stillOnline {
+					if err := bot.sendNotifyMessage(oldServer, player, false); err != nil {
+						slog.Error(fmt.Sprintf("Failed to send leave message: %s", err))
 					}
 				}
 			}
@@ -115,12 +135,14 @@ func (bot *DiscordBot) Start(updateChan <-chan map[string]*model.ServerInfo) err
 
 		lastInfos = make(map[string]*model.ServerInfo)
 
-		for k, v := range ifos {
-			playersCopy := make([]string, len(v.Players))
-			copy(playersCopy, v.Players)
+		for server, info := range ifos {
+			playersCopy := make([]string, len(info.Players))
+			copy(playersCopy, info.Players)
 
-			lastInfos[k] = &model.ServerInfo{
-				Players: playersCopy,
+			lastInfos[server] = &model.ServerInfo{
+				Name:      info.Name,
+				Players:   playersCopy,
+				Reachable: info.Reachable,
 			}
 		}
 	}
@@ -138,11 +160,17 @@ func (bot *DiscordBot) sendNotifyMessage(server string, player string, joined bo
 	var err error
 
 	if joined {
-		_, err = bot.session.ChannelMessageSend(bot.cfg.ChannelIDJoinLeave, fmt.Sprintf("[%s] Player %s joined the server", server, player))
+		_, err = bot.session.ChannelMessageSend(bot.cfg.ChannelIDJoinLeave, fmt.Sprintf("[%s] %s joined the server", server, player))
 	} else {
-		_, err = bot.session.ChannelMessageSend(bot.cfg.ChannelIDJoinLeave, fmt.Sprintf("[%s] Player %s left the server", server, player))
+		_, err = bot.session.ChannelMessageSend(bot.cfg.ChannelIDJoinLeave, fmt.Sprintf("[%s] %s left the server", server, player))
 	}
 
+	return err
+}
+
+func (bot *DiscordBot) sendMoveMessage(player string, oldserver string, newserver string) error {
+	var err error
+	_, err = bot.session.ChannelMessageSend(bot.cfg.ChannelIDJoinLeave, fmt.Sprintf("[%s -> %s] %s moved servers", oldserver, newserver, player))
 	return err
 }
 
